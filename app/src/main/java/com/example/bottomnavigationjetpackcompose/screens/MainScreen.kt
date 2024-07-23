@@ -1,6 +1,7 @@
 package com.example.bottomnavigationjetpackcompose.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,23 +12,28 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -42,6 +48,7 @@ import com.example.bottomnavigationjetpackcompose.BottomNavigationItems
 import com.example.bottomnavigationjetpackcompose.screens.bottomNav.HomeTab
 import com.example.bottomnavigationjetpackcompose.screens.bottomNav.ProfileTab
 import com.example.bottomnavigationjetpackcompose.screens.bottomNav.SearchTab
+import com.example.bottomnavigationjetpackcompose.screens.bottomNav.SettingsTab
 
 @Composable
 fun MainScreen(navController: NavHostController) {
@@ -53,16 +60,9 @@ fun MainScreen(navController: NavHostController) {
 @Composable
 fun MainScreenContent(parentNavController: NavController){
     val navController = rememberNavController()
-    val items = rememberSaveable {
-        listOf(
-            BottomNavigationItems.HomeTabScreen,
-            BottomNavigationItems.SearchTabScreen,
-            BottomNavigationItems.ProfileTabScreen
-        )
-    }
     Scaffold (
         bottomBar = {
-            BottomNavigationBar(navController = navController, items = items)
+            BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
         NavHost(navController = navController, startDestination = BottomNavigationItems.HomeTabScreen.route){
@@ -75,19 +75,26 @@ fun MainScreenContent(parentNavController: NavController){
             composable(BottomNavigationItems.ProfileTabScreen.route) {
                 ProfileTab(navController = navController,parentNavController= parentNavController)
             }
+            composable(BottomNavigationItems.SettingsTabScreen.route) {
+                SettingsTab(navController = navController,parentNavController= parentNavController)
+            }
         }
 
     }
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController, items: List<BottomNavigationItems>) {
+fun BottomNavigationBar(navController: NavController) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .shadow(20.dp)
-            .border(0.5.dp, Color.LightGray, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .border(
+                0.5.dp,
+                Color.LightGray,
+                RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+            )
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             .fillMaxWidth()
             .background(Color.White)
@@ -97,26 +104,81 @@ fun BottomNavigationBar(navController: NavController, items: List<BottomNavigati
         val navStackBackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navStackBackEntry?.destination
 
-        items.forEach{screen->
-            CustomNavBarItem(
-                selected = currentRoute?.hierarchy?.any{it.route == screen.route} == true,
-                onClick = {
-                    navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        // Avoid multiple copies of the same destination when
-                        // re-selecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
+        CustomNavBarItem(
+            selected = currentRoute?.hierarchy?.any { it.route == BottomNavigationItems.HomeTabScreen.route } == true,
+            onClick = {
+                navController.navigate(BottomNavigationItems.HomeTabScreen.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
                     }
-                },
-                icon = screen.icon,
-                label = screen.title
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = BottomNavigationItems.HomeTabScreen.icon,
+            label = BottomNavigationItems.HomeTabScreen.title
+        )
+        CustomNavBarItem(
+            selected = currentRoute?.hierarchy?.any { it.route == BottomNavigationItems.SearchTabScreen.route } == true,
+            onClick = {
+                navController.navigate(BottomNavigationItems.SearchTabScreen.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = BottomNavigationItems.SearchTabScreen.icon,
+            label = BottomNavigationItems.SearchTabScreen.title
+        )
+        Spacer(modifier = Modifier.width(60.dp)) // here size is nearly the size of the FAB
+        CustomNavBarItem(
+            selected = currentRoute?.hierarchy?.any { it.route == BottomNavigationItems.SettingsTabScreen.route } == true,
+            onClick = {
+                navController.navigate(BottomNavigationItems.SettingsTabScreen.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = BottomNavigationItems.SettingsTabScreen.icon,
+            label = BottomNavigationItems.SettingsTabScreen.title
+        )
+        CustomNavBarItem(
+            selected = currentRoute?.hierarchy?.any { it.route == BottomNavigationItems.ProfileTabScreen.route } == true,
+            onClick = {
+                navController.navigate(BottomNavigationItems.ProfileTabScreen.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = BottomNavigationItems.ProfileTabScreen.icon,
+            label = BottomNavigationItems.ProfileTabScreen.title
+        )
+    }
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+        val context = LocalContext.current
+        LargeFloatingActionButton(
+            modifier = Modifier
+                .size(64.dp)
+                .offset(y = -30.dp),
+            onClick = {
+                Toast.makeText(context, "FAB Clicked", Toast.LENGTH_SHORT).show()
+            },
+            shape = CircleShape,
+            containerColor = Color.Blue,
+        ) {
+            Icon(
+                Icons.Outlined.Add,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
             )
         }
     }
@@ -141,4 +203,10 @@ fun CustomNavBarItem(selected: Boolean= true, onClick: () -> Unit = {}, icon: Im
             .width(20.dp)
         )
     }
+}
+
+@Preview
+@Composable
+fun MainScreenPreview(){
+    MainScreenContent(parentNavController = rememberNavController())
 }
