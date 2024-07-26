@@ -26,6 +26,8 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,40 +53,44 @@ import com.example.bottomnavigationjetpackcompose.screens.bottomNav.SearchTab
 import com.example.bottomnavigationjetpackcompose.screens.bottomNav.SettingsTab
 
 @Composable
-fun MainScreen(navController: NavHostController) {
-    MainScreenContent(navController)
+fun MainScreen() {
+    MainScreenContent()
 }
 
+val LocalBottomNavHostController = compositionLocalOf<NavHostController> { error("No bottom nav host found!") }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreenContent(parentNavController: NavController){
+fun MainScreenContent(){
     val navController = rememberNavController()
-    Scaffold (
-        bottomBar = {
-            BottomNavigationBar(navController = navController)
-        }
-    ) { innerPadding ->
-        NavHost(navController = navController, startDestination = BottomNavigationItems.HomeTabScreen.route){
-            composable(BottomNavigationItems.HomeTabScreen.route) {
-                HomeTab(navController = navController, parentNavController= parentNavController)
+    CompositionLocalProvider(LocalBottomNavHostController provides navController) {
+        Scaffold (
+            bottomBar = {
+                BottomNavigationBar()
             }
-            composable(BottomNavigationItems.SearchTabScreen.route) {
-                SearchTab(navController = navController,parentNavController= parentNavController)
+        ) { innerPadding ->
+            NavHost(navController = navController, startDestination = BottomNavigationItems.HomeTabScreen.route){
+                composable(BottomNavigationItems.HomeTabScreen.route) {
+                    HomeTab()
+                }
+                composable(BottomNavigationItems.SearchTabScreen.route) {
+                    SearchTab()
+                }
+                composable(BottomNavigationItems.ProfileTabScreen.route) {
+                    ProfileTab()
+                }
+                composable(BottomNavigationItems.SettingsTabScreen.route) {
+                    SettingsTab()
+                }
             }
-            composable(BottomNavigationItems.ProfileTabScreen.route) {
-                ProfileTab(navController = navController,parentNavController= parentNavController)
-            }
-            composable(BottomNavigationItems.SettingsTabScreen.route) {
-                SettingsTab(navController = navController,parentNavController= parentNavController)
-            }
-        }
 
+        }
     }
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar() {
+    val navController = LocalBottomNavHostController.current
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
@@ -208,5 +214,5 @@ fun CustomNavBarItem(selected: Boolean= true, onClick: () -> Unit = {}, icon: Im
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreenContent(parentNavController = rememberNavController())
+    MainScreenContent()
 }

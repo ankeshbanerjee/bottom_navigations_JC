@@ -15,11 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.bottomnavigationjetpackcompose.LocalRootNavHostController
 import com.example.bottomnavigationjetpackcompose.Main
 
 @Composable
-fun DetailScreen(navController: NavHostController) {
-    DetailScreenContent({
+fun DetailScreen() {
+    val navController = LocalRootNavHostController.current
+    DetailScreenContent(goBack = {
         navController.popBackStack()
     })
 }

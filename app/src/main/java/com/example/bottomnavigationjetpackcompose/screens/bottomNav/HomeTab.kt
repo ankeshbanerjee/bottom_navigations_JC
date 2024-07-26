@@ -14,9 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.bottomnavigationjetpackcompose.Detail
+import com.example.bottomnavigationjetpackcompose.LocalRootNavHostController
 
 @Composable
-fun HomeTab(navController: NavHostController, parentNavController: NavController) {
+fun HomeTab() {
+    val parentNavController = LocalRootNavHostController.current
     HomeTabContent({
         parentNavController.navigate(Detail)
     })

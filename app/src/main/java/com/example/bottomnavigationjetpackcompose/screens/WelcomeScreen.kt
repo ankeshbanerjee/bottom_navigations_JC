@@ -15,12 +15,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.bottomnavigationjetpackcompose.LocalRootNavHostController
 import com.example.bottomnavigationjetpackcompose.Main
 
 @Composable
-fun WelcomeScreen(navController: NavHostController) {
+fun WelcomeScreen() {
+    val navController = LocalRootNavHostController.current
     WelcomeScreenContent({
-//        navController.navigate(Main)
+        // navController.navigate(Main)
 
         // navigation.replace type thing
         navController.navigate(Main){

@@ -15,7 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
 @Composable
-fun SettingsTab(navController: NavHostController, parentNavController: NavController) {
+fun SettingsTab() {
     SettingsTabContent()
 }
 

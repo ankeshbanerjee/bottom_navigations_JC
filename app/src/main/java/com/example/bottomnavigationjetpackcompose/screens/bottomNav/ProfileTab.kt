@@ -15,7 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
 @Composable
-fun ProfileTab(navController: NavHostController, parentNavController: NavController) {
+fun ProfileTab() {
     ProfileTabContent()
 }
 

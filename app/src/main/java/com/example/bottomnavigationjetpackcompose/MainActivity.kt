@@ -9,8 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,18 +37,22 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+val LocalRootNavHostController = compositionLocalOf<NavHostController> { error("No root nav host found!") }
+
 @Composable
 fun App(){
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Welcome){
-        composable<Welcome> {
-            WelcomeScreen(navController)
-        }
-        composable<Main> {
-            MainScreen(navController)
-        }
-        composable<Detail> {
-            DetailScreen(navController)
+    CompositionLocalProvider(LocalRootNavHostController provides navController){
+        NavHost(navController = navController, startDestination = Welcome){
+            composable<Welcome> {
+                WelcomeScreen()
+            }
+            composable<Main> {
+                MainScreen()
+            }
+            composable<Detail> {
+                DetailScreen()
+            }
         }
     }
 }
